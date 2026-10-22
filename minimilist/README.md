@@ -5,6 +5,8 @@
 ![Flutter](https://img.shields.io/badge/Flutter-3.x-027DFB)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
+**Repository:** <https://github.com/<your-username>/minimilist> · **Issues:** <https://github.com/<your-username>/minimilist/issues> · **Design inspiration:** [milligram/milligram](https://github.com/milligram/milligram)
+
 ---
 
 ## ✨ Why minimilist?
@@ -19,16 +21,64 @@
 
 ## 🚀 Installation
 
-Add to your `pubspec.yaml`:
+### Install from GitHub
+
+`minimilist` is distributed as a Flutter package on GitHub. Add it under `dependencies:` in your app's `pubspec.yaml`:
+
+```yaml
+dependencies:
+  flutter:
+    sdk: flutter
+
+  minimilist:
+    git:
+      url: https://github.com/<your-username>/minimilist.git
+      ref: main          # branch, tag (e.g. v1.0.0) or commit hash — optional
+```
+
+If the package lives inside a monorepo sub-folder, point at it with `path`:
 
 ```yaml
 dependencies:
   minimilist:
     git:
-      url: https://github.com/milligram/milligram.git # or a path/hosted pub package named "minimilist"
+      url: https://github.com/<your-username>/minimilist.git
+      ref: main
+      path: packages/minimilist   # sub-directory that contains pubspec.yaml
 ```
 
-Then import:
+Then fetch the dependency:
+
+```bash
+flutter pub get
+```
+
+### Alternative install methods
+
+**Local path** (while developing, or vendoring the repo):
+
+```yaml
+dependencies:
+  minimilist:
+    path: ../minimilist        # folder containing this README/pubspec.yaml
+```
+
+**Pub.dev** (once published):
+
+```yaml
+dependencies:
+  minimilist: ^1.0.0
+```
+
+Or add it with the CLI:
+
+```bash
+flutter pub add minimilist
+# from GitHub directly:
+dart pub add minimilist:'{"git":{"url":"https://github.com/<your-username>/minimilist.git","ref":"main"}}'
+```
+
+### Import
 
 ```dart
 import 'package:minimilist/minimilist.dart';
@@ -71,6 +121,68 @@ Prefer another accent? `MinimilistTheme.light(primaryColor: Colors.indigo)`.
 | spacing rhythm             | `MSpacer`, `MHalfSpacer`                               |
 
 ## 📖 Usage examples
+
+### Complete app — drop-in starter (`main.dart`)
+
+```dart
+import 'package:flutter/material.dart';
+import 'package:minimilist/minimilist.dart';
+
+void main() => runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Minimilist Demo',
+      theme: MinimilistTheme.light(),
+      darkTheme: MinimilistTheme.dark(),
+      home: const HomeScreen(),
+    );
+  }
+}
+
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  final email = TextEditingController();
+  bool agreed = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: const MAppBar(title: Text('minimilist')),
+      body: MContainer(
+        child: ListView(
+          padding: const EdgeInsets.all(MinimilistSpacing.gridGutter),
+          children: [
+            const MHeading('Hello, world', level: MHeadingLevel.h1),
+            const MText('A Milligram-style UI, in Flutter.'),
+            const MSpacer(),
+            MRow(children: const [
+              MColumn(width: MWidth.oneHalf, child: MCard(title: 'Left', child: MText('one-half'))),
+              MColumn(width: MWidth.oneHalf, child: MCard(title: 'Right', child: MText('one-half'))),
+            ]),
+            const MSpacer(),
+            MTextField(controller: email, label: 'Email address', hintText: 'ada@example.com'),
+            MCheckboxField(label: 'I agree to the terms', value: agreed, onChanged: (v) => setState(() => agreed = v)),
+            const MHalfSpacer(),
+            MButton(label: 'Send', onPressed: () => MSnackBar.show(context, message: 'Saved!')),
+            MButton(label: 'Cancel', variant: MButtonVariant.outlined, onPressed: () {}),
+          ],
+        ),
+      ),
+    );
+  }
+}
+```
 
 ### Typography
 
@@ -147,6 +259,15 @@ final ok = await MDialog.confirm(
 );
 ```
 
+## 📸 Screenshots
+
+Add screenshots of your example app here (drop images into `doc/screenshots/`):
+
+```markdown
+![Home screen](doc/screenshots/home.png)
+![Forms](doc/screenshots/forms.png)
+```
+
 ## 🧪 Example app
 
 A full showcase lives in [`example/`](example/):
@@ -176,3 +297,8 @@ MinimilistBreakpoint.of(context)    // phone/tablet/desktop detection
 ## 📄 License
 
 MIT — same spirit (and source of inspiration) as [Milligram](https://github.com/milligram/milligram/blob/master/LICENSE).
+
+## 🙏 Acknowledgements
+
+- Design system ported from [CoffeyCo's Milligram](https://github.com/milligram/milligram) (MIT licensed).
+- Built with Flutter's Material theming APIs.
